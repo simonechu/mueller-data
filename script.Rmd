@@ -44,7 +44,8 @@ ggplot(aes(x = word, y = n, fill = sentiment)) +
   geom_col() + 
   xlab("Word") + 
   ylab("Number of Instances") + 
-  labs(title = "The Top 10 Most Used Words the Mueller Report") + 
+  labs(title = "The Top 10 Most Used Words in the Mueller Report",
+       fill = "Sentiment") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
@@ -54,6 +55,16 @@ ggplot(aes(x = word, y = n, fill = sentiment)) +
 mueller_sentiment %>%
   filter(word != "trump") %>%
   group_by(sentiment) %>%
+  count() %>%
+  
+ggplot(aes(x = sentiment, y = n, fill = sentiment)) + 
+  geom_col(show.legend=FALSE) + 
+  xlab("Sentiment") + 
+  ylab("Number of Words") + 
+  labs(title = "The Mueller Report Used More Negative Language",
+       subtitle = "Negative words outnumber positive words") + 
+  coord_flip()
+  
 
 ```
 
