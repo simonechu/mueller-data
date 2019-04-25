@@ -1,0 +1,59 @@
+---
+title: "script"
+author: "Simone Chu"
+date: "4/25/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(fs)
+library(tidytext)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r download_data, echo=FALSE, include=FALSE, message=FALSE}
+download.file("https://raw.githubusercontent.com/gadenbuie/mueller-report/master/mueller_report.csv", destfile = "mueller_report.csv")
+
+mueller <- read.csv("mueller_report.csv")
+
+mueller <- paste(readLines("mueller_report.csv"))
+
+mueller <- data.frame(mueller, stringsAsFactors = FALSE)
+
+mueller_tidy <- mueller %>%
+  unnest_tokens(word, mueller) %>%
+  filter(word != "p")
+
+mueller_sentiment <- mueller_tidy %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment)
+```
+
+
+```{r, echo=FALSE, message=FALSE}
+
+mueller_sentiment %>%
+  filter(word != "trump") %>%
+  arrange(desc(n)) %>%
+  slice(1:10) %>%
+  
+ggplot(aes(x = word, y = n, fill = sentiment)) + 
+  geom_col() + 
+  xlab("Word") + 
+  ylab("Number of Instances") + 
+  labs(title = "The Top 10 Most Used Words the Mueller Report") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+
+mueller_sentiment %>%
+  filter(word != "trump") %>%
+  group_by(sentiment) %>%
+
+```
+
